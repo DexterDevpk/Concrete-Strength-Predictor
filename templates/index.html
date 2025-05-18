@@ -16,7 +16,7 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
-        input[type="number"] {
+        input[type="number"], select {
             width: 100%;
             padding: 10px;
             margin: 8px 0 20px 0;
@@ -49,6 +49,16 @@
 
             <label for="days">Curing Time (Days)</label>
             <input type="number" step="1" name="days" required>
+
+            <label for="model">Select Prediction Model</label>
+            <select name="model" required>
+                <option value="best_model1.pkl">Compressive strength of Sustainable concrete</option>
+                <option value="best_model2.pkl">Compressive strength of Marine concrete</option>
+                <option value="best_model3.pkl">Tensile strength of Sustainable Concrete</option>
+                <option value="best_model4.pkl">Tensile strength of Marine Concrete</option>
+                <option value="best_model5.pkl">Flexural strength of Sustainable  Concrete</option>
+                <option value="best_model6.pkl">Flexural strength of Marine Concrete</option>
+            </select>
 
             <button type="submit">Predict</button>
         </form>
