@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Concrete Strength Predictor</title>
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #f2f2f2;
+            padding: 40px;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            width: 400px;
+            margin: auto;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0 20px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px;
+            width: 100%;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .output {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Concrete Strength Predictor</h2>
+        <form action="/predict" method="post">
+            <label for="ash">Volcanic Ash (%)</label>
+            <input type="number" step="0.01" name="ash" required>
+
+            <label for="days">Curing Time (Days)</label>
+            <input type="number" step="1" name="days" required>
+
+            <button type="submit">Predict</button>
+        </form>
+        <div class="output">
+            {{ prediction_text }}
+        </div>
+    </div>
+</body>
+</html>
