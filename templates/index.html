@@ -1,70 +1,131 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Concrete Strength Predictor</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Concrete Strength Prediction</title>
     <style>
         body {
-            font-family: Arial;
-            background-color: #f2f2f2;
-            padding: 40px;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f7f7f7;
         }
         .container {
-            background-color: white;
-            padding: 30px;
-            width: 400px;
-            margin: auto;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-        input[type="number"], select {
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input, select {
             width: 100%;
             padding: 10px;
-            margin: 8px 0 20px 0;
+            margin: 5px 0;
             border: 1px solid #ccc;
-            border-radius: 5px;
+            border-radius: 4px;
         }
         button {
             background-color: #4CAF50;
             color: white;
-            padding: 12px;
-            width: 100%;
+            padding: 12px 20px;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
+            width: 100%;
         }
-        .output {
-            margin-top: 20px;
-            font-size: 18px;
-            color: #333;
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
             text-align: center;
+            font-size: 20px;
+            margin-top: 20px;
+            color: #333;
+        }
+        .graph {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .graph img {
+            width: 100%;
+            max-width: 600px;
+        }
+        .alert {
+            background-color: #f9edbe;
+            border: 1px solid #f0c36d;
+            color: #7e6e1f;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .try-again-btn {
+            background-color: #f44336;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .try-again-btn:hover {
+            background-color: #d32f2f;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Concrete Strength Predictor</h2>
-        <form action="/predict" method="post">
-            <label for="ash">Volcanic Ash (%)</label>
-            <input type="number" step="0.01" name="ash" required>
-
-            <label for="days">Curing Time (Days)</label>
-            <input type="number" step="1" name="days" required>
-
-            <label for="model">Select Prediction Model</label>
-            <select name="model" required>
-                <option value="best_model1.pkl">Compressive strength of Sustainable concrete</option>
-                <option value="best_model2.pkl">Compressive strength of Marine concrete</option>
-                <option value="best_model3.pkl">Tensile strength of Sustainable Concrete</option>
-                <option value="best_model4.pkl">Tensile strength of Marine Concrete</option>
-                <option value="best_model5.pkl">Flexural strength of Sustainable  Concrete</option>
-                <option value="best_model6.pkl">Flexural strength of Marine Concrete</option>
-            </select>
-
-            <button type="submit">Predict</button>
+        <h1>Concrete Strength Prediction</h1>
+        <form method="POST" action="/predict">
+            <div class="form-group">
+                <label for="ash">Volcanic Ash Content (Percentage):</label>
+                <input type="number" name="ash" step="any" required>
+            </div>
+            <div class="form-group">
+                <label for="days">Days of Curing:</label>
+                <input type="number" name="days" step="any" required>
+            </div>
+            <div class="form-group">
+                <label for="model">Choose Model:</label>
+                <select name="model" required>
+                    {% for model_file, description in model_options.items() %}
+                        <option value="{{ model_file }}">{{ description }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit">Predict Strength</button>
         </form>
-        <div class="output">
-            {{ prediction_text }}
-        </div>
+
+        {% if prediction_text %}
+            <div class="result">
+                <p>{{ prediction_text }}</p>
+            </div>
+        {% endif %}
+
+        {% if plot_url %}
+            <div class="graph">
+                <img src="{{ plot_url }}" alt="Prediction Graph">
+            </div>
+        {% endif %}
+
+        {% if prediction_text %}
+            <form action="/" method="get">
+                <button type="submit" class="try-again-btn">Try Again</button>
+            </form>
+        {% endif %}
     </div>
 </body>
 </html>
