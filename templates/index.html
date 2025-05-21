@@ -1,131 +1,255 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Concrete Strength Prediction</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f7f7f7;
-        }
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            color: #333;
-            text-align: center;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            font-weight: bold;
-        }
-        input, select {
-            width: 100%;
-            padding: 10px;
-            margin: 5px 0;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        .result {
-            text-align: center;
-            font-size: 20px;
-            margin-top: 20px;
-            color: #333;
-        }
-        .graph {
-            text-align: center;
-            margin-top: 20px;
-        }
-        .graph img {
-            width: 100%;
-            max-width: 600px;
-        }
-        .alert {
-            background-color: #f9edbe;
-            border: 1px solid #f0c36d;
-            color: #7e6e1f;
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 20px;
-            text-align: center;
-        }
-        .try-again-btn {
-            background-color: #f44336;
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 20px;
-        }
-        .try-again-btn:hover {
-            background-color: #d32f2f;
-        }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Concrete Strength Prediction</title>
+<style>
+  /* Reset some defaults */
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f9fafb;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    color: #222;
+  }
+
+  .container {
+    background: white;
+    max-width: 480px;
+    width: 100%;
+    padding: 30px 35px;
+    border-radius: 8px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  }
+
+  h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 700;
+    color: #004d40;
+  }
+
+  label {
+    display: block;
+    margin-top: 18px;
+    margin-bottom: 6px;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #333;
+  }
+
+  select, input[type=number] {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 1rem;
+    border: 1.8px solid #ccc;
+    border-radius: 6px;
+    transition: border-color 0.3s ease;
+  }
+
+  select:focus, input[type=number]:focus {
+    border-color: #26a69a;
+    outline: none;
+    box-shadow: 0 0 6px #26a69aaa;
+  }
+
+  button {
+    width: 100%;
+    margin-top: 28px;
+    padding: 14px 0;
+    font-size: 1.1rem;
+    background-color: #26a69a;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  button:disabled {
+    background-color: #a5d6d0;
+    cursor: not-allowed;
+  }
+
+  button:hover:not(:disabled) {
+    background-color: #1e8175;
+  }
+
+  .error {
+    color: #c62828;
+    margin-top: 15px;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .result {
+    background-color: #e0f2f1;
+    padding: 18px 20px;
+    border-radius: 8px;
+    margin-top: 25px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    text-align: center;
+    color: #004d40;
+  }
+
+  img {
+    display: block;
+    max-width: 100%;
+    margin: 25px auto 0;
+    border-radius: 8px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+    background: white;
+  }
+
+  /* Responsive */
+  @media (max-width: 500px) {
+    .container {
+      padding: 25px 20px;
+    }
+
+    h2 {
+      font-size: 1.6rem;
+    }
+
+    button {
+      font-size: 1rem;
+      padding: 12px 0;
+    }
+  }
+</style>
 </head>
 <body>
-    <div class="container">
-        <h1>Concrete Strength Prediction</h1>
-        <form method="POST" action="/predict">
-            <div class="form-group">
-                <label for="ash">Volcanic Ash Content (Percentage):</label>
-                <input type="number" name="ash" step="any" required>
-            </div>
-            <div class="form-group">
-                <label for="days">Days of Curing:</label>
-                <input type="number" name="days" step="any" required>
-            </div>
-            <div class="form-group">
-                <label for="model">Choose Model:</label>
-                <select name="model" required>
-                    {% for model_file, description in model_options.items() %}
-                        <option value="{{ model_file }}">{{ description }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <button type="submit">Predict Strength</button>
-        </form>
+  <div class="container">
+    <h2>Concrete Strength Prediction</h2>
 
-        {% if prediction_text %}
-            <div class="result">
-                <p>{{ prediction_text }}</p>
-            </div>
-        {% endif %}
+    <label for="ash_type">Select Ash Type:</label>
+    <select id="ash_type" required>
+      <option value="">-- Select Ash Type --</option>
+      <option value="volcanic">Volcanic Ash</option>
+      <option value="flyash">Fly Ash</option>
+    </select>
 
-        {% if plot_url %}
-            <div class="graph">
-                <img src="{{ plot_url }}" alt="Prediction Graph">
-            </div>
-        {% endif %}
+    <label for="model">Select Model:</label>
+    <select id="model" disabled required>
+      <option value="">-- Select Model --</option>
+    </select>
 
-        {% if prediction_text %}
-            <form action="/" method="get">
-                <button type="submit" class="try-again-btn">Try Again</button>
-            </form>
-        {% endif %}
-    </div>
+    <label for="ash">Ash Percentage (%):</label>
+    <input type="number" id="ash" min="0" max="100" step="any" placeholder="Enter ash percentage" disabled required />
+
+    <label for="days">Curing Time (Days):</label>
+    <input type="number" id="days" min="0" max="1000" step="any" placeholder="Enter curing time in days" disabled required />
+
+    <button id="predict_btn" disabled>Predict</button>
+
+    <div id="error_msg" class="error"></div>
+    <div id="result" class="result" style="display:none;"></div>
+    <img id="result_plot" src="" alt="Prediction Plot" style="display:none;" />
+  </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const ashTypeSelect = document.getElementById('ash_type');
+  const modelSelect = document.getElementById('model');
+  const ashInput = document.getElementById('ash');
+  const daysInput = document.getElementById('days');
+  const predictBtn = document.getElementById('predict_btn');
+  const errorMsg = document.getElementById('error_msg');
+  const resultDiv = document.getElementById('result');
+  const resultPlot = document.getElementById('result_plot');
+
+  ashTypeSelect.addEventListener('change', () => {
+    const ashType = ashTypeSelect.value;
+    modelSelect.innerHTML = '<option value="">Loading models...</option>';
+    modelSelect.disabled = true;
+    ashInput.value = '';
+    ashInput.disabled = true;
+    daysInput.value = '';
+    daysInput.disabled = true;
+    predictBtn.disabled = true;
+    errorMsg.textContent = '';
+    resultDiv.style.display = 'none';
+    resultPlot.style.display = 'none';
+
+    if (!ashType) {
+      modelSelect.innerHTML = '<option value="">-- Select Model --</option>';
+      return;
+    }
+
+    fetch(`/get_models/${ashType}`)
+      .then(response => response.json())
+      .then(data => {
+        modelSelect.innerHTML = '<option value="">-- Select Model --</option>';
+        for (const [filename, desc] of Object.entries(data)) {
+          const option = document.createElement('option');
+          option.value = filename;
+          option.textContent = desc;
+          modelSelect.appendChild(option);
+        }
+        modelSelect.disabled = false;
+      })
+      .catch(() => {
+        modelSelect.innerHTML = '<option value="">Error loading models</option>';
+      });
+  });
+
+  // Enable inputs only if model is selected
+  modelSelect.addEventListener('change', () => {
+    const isModelSelected = modelSelect.value !== '';
+    ashInput.disabled = !isModelSelected;
+    daysInput.disabled = !isModelSelected;
+    predictBtn.disabled = !isModelSelected;
+    errorMsg.textContent = '';
+    resultDiv.style.display = 'none';
+    resultPlot.style.display = 'none';
+  });
+
+  predictBtn.addEventListener('click', () => {
+    errorMsg.textContent = '';
+    resultDiv.style.display = 'none';
+    resultPlot.style.display = 'none';
+
+    const ashType = ashTypeSelect.value;
+    const model = modelSelect.value;
+    const ash = ashInput.value;
+    const days = daysInput.value;
+
+    if (!ashType || !model || !ash || !days) {
+      errorMsg.textContent = 'Please fill in all fields.';
+      return;
+    }
+
+    fetch('/predict', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ash_type: ashType, model, ash, days })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.error) {
+        errorMsg.textContent = data.error;
+      } else {
+        resultDiv.textContent = `Predicted Strength: ${data.prediction} MPa`;
+        resultDiv.style.display = 'block';
+        resultPlot.src = data.plot_url;
+        resultPlot.style.display = 'block';
+      }
+    })
+    .catch(() => {
+      errorMsg.textContent = 'Error occurred during prediction.';
+    });
+  });
+});
+</script>
 </body>
 </html>
