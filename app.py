@@ -27,7 +27,6 @@ model_mapping = {
     "fa_model1.pkl": "Fly Ash Model 1",
     "fa_model2.pkl": "Fly Ash Model 2"
 }
-
 def get_model_files(directory):
     model_files = {}
     if not os.path.exists(directory):
@@ -38,6 +37,7 @@ def get_model_files(directory):
             model_files[model_file] = description
     return model_files
 
+
 @app.route('/', methods=['GET'])
 def index():
     # Initial page load, no model loaded yet
@@ -46,11 +46,12 @@ def index():
 @app.route('/get_models/<ash_type>')
 def get_models_api(ash_type):
     if ash_type == 'flyash':
-        models_directory = flyash_models_directory
+        # Return fixed dict for Fly Ash only
+        return jsonify({"fa_model1.pkl": "Compressive Strength Model"})
     else:
         models_directory = volcanic_models_directory
-    models = get_model_files(models_directory)
-    return jsonify(models)
+        models = get_model_files(models_directory)
+        return jsonify(models)
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -111,3 +112,4 @@ def generate_plot(ash, days, prediction):
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
+
