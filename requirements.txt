@@ -59,11 +59,6 @@ jiter==0.8.2
 joblib==1.4.2
 julia==0.6.2
 keras==3.8.0
-Kivy==2.3.1
-kivy-deps.angle==0.4.0
-kivy-deps.glew==0.3.1
-Kivy-Garden==0.1.5
-kivy_deps.sdl2==0.8.0
 kiwisolver==1.4.7
 libclang==18.1.1
 llvmlite==0.44.0
