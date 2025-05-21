@@ -1,11 +1,11 @@
 import matplotlib
-matplotlib.use('Agg')  # Use non-GUI backend for matplotlib
+matplotlib.use('Agg')  # Non-GUI backend for matplotlib
 
 from flask import Flask, request, render_template, jsonify
 import joblib
 import numpy as np
-import pandas as pd
 import os
+import pandas as pd
 import matplotlib.pyplot as plt
 import io
 import base64
@@ -23,10 +23,10 @@ model_mapping = {
     "best_model4.pkl": "Tensile strength of Marine Concrete",
     "best_model5.pkl": "Flexural strength of Sustainable Concrete",
     "best_model6.pkl": "Flexural strength of Marine Concrete",
-    # Fly Ash models (example)
-    "fa_model1.pkl": "Fly Ash Model 1",
-    "fa_model2.pkl": "Fly Ash Model 2"
+    # Fly Ash models example
+    "best_modelFA.pkl": "Compressive Strength Model"
 }
+
 def get_model_files(directory):
     model_files = {}
     if not os.path.exists(directory):
@@ -37,21 +37,18 @@ def get_model_files(directory):
             model_files[model_file] = description
     return model_files
 
-
 @app.route('/', methods=['GET'])
 def index():
-    # Initial page load, no model loaded yet
     return render_template('index.html')
 
 @app.route('/get_models/<ash_type>')
 def get_models_api(ash_type):
     if ash_type == 'flyash':
-        # Return fixed dict for Fly Ash only
-        return jsonify({"fa_model1.pkl": "Compressive Strength Model"})
+        models_directory = flyash_models_directory
     else:
         models_directory = volcanic_models_directory
-        models = get_model_files(models_directory)
-        return jsonify(models)
+    models = get_model_files(models_directory)
+    return jsonify(models)
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -70,20 +67,20 @@ def predict():
 
     if ash_type == 'flyash':
         models_directory = flyash_models_directory
+        # Exact column names used to train Fly Ash models
+        input_df = pd.DataFrame([[ash_val, days_val]], columns=['FA (%)', 'Curing time (Days)'])
     else:
         models_directory = volcanic_models_directory
+        # Exact column names used to train Volcanic Ash models
+        input_df = pd.DataFrame([[ash_val, days_val]], columns=['Volcanic Ash (%)', 'Curing Time (Days)'])
 
     model_path = os.path.join(models_directory, selected_model)
     if not os.path.exists(model_path):
         return jsonify({'error': 'Selected model file not found.'}), 400
 
-    # Load model and predict
     model = joblib.load(model_path)
-    # Pass DataFrame with column names to avoid sklearn warning
-    input_df = pd.DataFrame([[ash_val, days_val]], columns=['FA (%)', 'Curing time (Days)'])
     prediction = model.predict(input_df)[0]
 
-    # Generate plot image as base64
     plot_url = generate_plot(ash_val, days_val, prediction)
 
     return jsonify({
@@ -112,4 +109,3 @@ def generate_plot(ash, days, prediction):
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
-
